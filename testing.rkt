@@ -51,8 +51,6 @@ pred isQueue {
 		no tail.next
 		one next.tail
 		head.*next = Person
-		// points to the next person in line (haven't arrived at Ballpark yet)
-		NextPersonTracker.nextPerson = head.next.next.next.next.next
 	}
 }
 
@@ -66,6 +64,12 @@ pred initCapacity{
 pred init {
 	// Ballpark queue = 5 ppl
 	#(Ballpark.people) = 5
+	some head: Person | {
+		no next.head
+		// points to the next person in line (haven't arrived at Ballpark yet)
+		NextPersonTracker.nextPerson = head.next.next.next.next.next
+		Ballpark.people = head + head.next + head.next.next + head.next.next.next + head.next.next.next.next
+	}
 	// all other rooms are empty
 	no (people - Ballpark->Person)
 	// room capacities
