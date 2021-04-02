@@ -42,6 +42,7 @@ one sig vacRoom extends Room {
 one sig obsRoom extends Room {
 }
 
+// keeps track of time, starts at 0
 one sig Time{
 	var timer: one Int
 }
@@ -108,16 +109,17 @@ pred addToBallpark{
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson.next
 	people' = people + Ballpark->NextPersonTracker.nextPerson
 	vacRoom.numVaccines' = vacRoom.numVaccines
+	Time.timer' = Time.timer
 }
 
-pred ballToWaitingGurad{
+pred ballToWaitingGuard{
 	// waiting room must have room
 	#(waitingRoom.people) < sum[waitingRoom.capacity]
 }
 
 pred ballToWaiting{
 	// now at the head of the ballpark queue
-	ballToWaitingGurad
+	ballToWaitingGuard
 	some p: Person | {
 		p in Ballpark.people
 		(no next.p) or (next.p not in Ballpark.people)
@@ -125,6 +127,7 @@ pred ballToWaiting{
 	}
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 	vacRoom.numVaccines' = vacRoom.numVaccines
+	Time.timer' = Time.timer
 }
 
 pred waitingToVacGuard{
@@ -144,35 +147,62 @@ pred waitingToVac {
 		people' = people - waitingRoom->p + vacRoom->p
 	}
 	// subtract 1 from #vaccines
-	#numVaccines' = subtract[#numVaccines, sing[1]]
+	#numVaccines' = subtract[sum[#numVaccines], 1]
+	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
+	Time.timer' = Time.timer
+}
+
+pred vacToObsGuard{
+	before doNothing
+	#(obsRoom.people) < sum[obsRoom.capacity]
 }
 
 pred vacToObs{
 	// before doNothing and in vacRoom
 	// before doNothing
 	// before before you must be waitingToVac
-	before doNothing
-	#(obsRoom.people) < sum[obsRoom.capacity]
+	vacToObsGuard
+	vacRoom.numVaccines' = vacRoom.numVaccines
 	people’ = people - vacRoom->Person + obsRoom->(vacRoom.people)
+	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
+	Time.timer' = Time.timer
+}
+
+pred obsToExitGuard{
+
 }
 
 pred obsToExit{
+	obsToExitGuard
+
+	// once (doNothing and once(doNothing and once (doNothing and once p in obsRoom))) then move p to exit
 	// before, you must do vacToObs
 	// person must be here for 2 states
+	vacRoom.numVaccines' = vacRoom.numVaccines
+	Time.timer' = Time.timer
+	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
+
 }
 
 pred makeVaccines {
 	// max 6 every 3 states
 	// similar to requests on elevator
+	
+	Time.timer' = Time.timer
+	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 }
 
 // 5 minutes goes by
 pred doNothing {
 	// everything stays the same
-
+	not ballToWaitingGuard
+	not waitingToVacGuard
+	not vacToObsGuard
+	not obsToExitGuard
 	people' = people
 	vacRoom.numVaccines' = vacRoom.numVaccines
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
+	Time.timer' = sing[sum[Time.timer, sing[1]]]
 }
 
 pred traces{
@@ -184,4 +214,4 @@ pred traces{
 	// always (addToBallpark or ballToWaiting or doNothing)
 }
 
-run {traces} for exactly 10 Person, 7 Int
+run {traces} for exactly 10 Person, 8 Int
