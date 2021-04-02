@@ -6,6 +6,10 @@
 // 5 start in ballpark
 // # (people) < capacity
 
+// doNothing is 5 minutes
+// vacRoom 5 minutes
+// obsRoom stay 20 minutes
+
 option problem_type temporal
 option max_tracelength 40
 
@@ -38,6 +42,10 @@ one sig vacRoom extends Room {
 one sig obsRoom extends Room {
 }
 
+one sig Time{
+	var timer: one Int
+}
+
 // methods:
 // ***STATE CHANGE is 5 minutes ****
 // (for waiting: make a doNothing for each room (each state has a different time amt))  
@@ -63,6 +71,7 @@ pred initCapacity{
 
 pred init {
 	// Ballpark queue = 5 ppl
+	Time.timer = sing[0]
 	#(Ballpark.people) = 5
 	some head: Person | {
 		no next.head
@@ -101,12 +110,14 @@ pred addToBallpark{
 	vacRoom.numVaccines' = vacRoom.numVaccines
 }
 
+pred ballToWaitingGurad{
+	// waiting room must have room
+	#(waitingRoom.people) < sum[waitingRoom.capacity]
+}
 
 pred ballToWaiting{
 	// now at the head of the ballpark queue
-	// waiting room must have room
-	#(waitingRoom.people) < sum[waitingRoom.capacity]
-	// ?
+	ballToWaitingGurad
 	some p: Person | {
 		p in Ballpark.people
 		(no next.p) or (next.p not in Ballpark.people)
@@ -116,33 +127,49 @@ pred ballToWaiting{
 	vacRoom.numVaccines' = vacRoom.numVaccines
 }
 
+pred waitingToVacGuard{
+	// vaccination room must have room
+	#(vacRoom.people) < sum[vacRoom.capacity]
+	#numVaccines > sing[0]
+}
+
 pred waitingToVac {
 	// you must be at the head of the waiting room queue 
-	// vaccination room must have room
+
 	// TODO: if Vac is (full - 1),  else just go thru
-	#(vacRoom.people) < sum[vacRoom.capacity]
+	waitingToVacGuard
+	some p: Person | {
+		p in waitingRoom.people
+		(no next.p) or (next.p not in waitingRoom.people)
+		people' = people - waitingRoom->p + vacRoom->p
+	}
+	// subtract 1 from #vaccines
+	#numVaccines' = subtract[#numVaccines, sing[1]]
 }
 
 pred vacToObs{
-// before doNothing and in vacRoom
-// subtract 1 from #vaccines
-// before doNothing
-// before before you must be waitingToVac
+	// before doNothing and in vacRoom
+	// before doNothing
+	// before before you must be waitingToVac
+	before doNothing
+	#(obsRoom.people) < sum[obsRoom.capacity]
+	people’ = people - vacRoom->Person + obsRoom->(vacRoom.people)
 }
 
 pred obsToExit{
-// before, you must do vacToObs
-// person must be here for 2 states
+	// before, you must do vacToObs
+	// person must be here for 2 states
 }
 
 pred makeVaccines {
-// max 6 every 3 states
-// similar to requests on elevator
+	// max 6 every 3 states
+	// similar to requests on elevator
 }
 
 // 5 minutes goes by
 pred doNothing {
 	// everything stays the same
+
 	people' = people
 	vacRoom.numVaccines' = vacRoom.numVaccines
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
@@ -153,6 +180,7 @@ pred traces{
 	init
 	addToBallpark
 	after ballToWaiting
+	after after ballToWaiting
 	// always (addToBallpark or ballToWaiting or doNothing)
 }
 
