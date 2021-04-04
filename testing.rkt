@@ -44,7 +44,7 @@ one sig obsRoom extends Room {
 }
 
 // keeps track of time, starts at 0
-one sig Time{
+one sig Clock{
 	var timer: one Int
 }
 
@@ -73,7 +73,7 @@ pred initCapacity{
 
 pred init {
 	// Ballpark queue = 5 ppl
-	Time.timer = sing[0]
+	Clock.timer = sing[0]
 	#(Ballpark.people) = 5
 	some head: Person | {
 		no next.head
@@ -110,7 +110,7 @@ pred addToBallpark{
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson.next
 	people' = people + Ballpark->NextPersonTracker.nextPerson
 	vacRoom.numVaccines' = vacRoom.numVaccines
-	Time.timer' = Time.timer
+	Clock.timer' = Clock.timer
 	vacRoom.productionStage = vacRoom.productionStage'
 }
 
@@ -130,7 +130,7 @@ pred ballToWaiting{
 	}
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 	vacRoom.numVaccines' = vacRoom.numVaccines
-	Time.timer' = Time.timer
+	Clock.timer' = Clock.timer
 	vacRoom.productionStage = vacRoom.productionStage'
 }
 
@@ -154,7 +154,7 @@ pred waitingToVac {
 	// subtract 1 from #vaccines
 	#numVaccines' = subtract[sum[#numVaccines], 1]
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
-	Time.timer' = Time.timer
+	Clock.timer' = Clock.timer
 	vacRoom.productionStage = vacRoom.productionStage'
 }
 
@@ -170,7 +170,7 @@ pred vacToObs{
 	vacRoom.numVaccines' = vacRoom.numVaccines
 	people’ = people - vacRoom->Person + obsRoom->(vacRoom.people)
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
-	Time.timer' = Time.timer
+	Clock.timer' = Clock.timer
 	vacRoom.productionStage = vacRoom.productionStage'
 }
 
@@ -190,7 +190,7 @@ pred obsToExit{
 	}
 
 	vacRoom.numVaccines' = vacRoom.numVaccines
-	Time.timer' = Time.timer
+	Clock.timer' = Clock.timer
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 	vacRoom.productionStage = vacRoom.productionStage'
 }
@@ -209,7 +209,7 @@ pred makeVaccines {
 	vacRoom.productionStage' = sing[3]
 	// vacRoom.numVaccines' = sing[sum[vacRoom.numVaccines, sing[6]]]
 	people' = people
-	Time.timer' = Time.timer
+	Clock.timer' = Clock.timer
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 }
 
@@ -226,7 +226,7 @@ pred doNothing {
 
 	people' = people
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
-	Time.timer' = sing[sum[Time.timer, sing[1]]]
+	Clock.timer' = sing[sum[Clock.timer, sing[1]]]
 
 	// making the vaccine every 3 cycles
 	vacRoom.productionStage = sing[3] implies vacRoom.productionStage' = sing[2]
