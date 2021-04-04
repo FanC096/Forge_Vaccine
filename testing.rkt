@@ -11,7 +11,7 @@
 // obsRoom stay 20 minutes
 
 option problem_type temporal
-option max_tracelength 40
+option max_tracelength 200
 
 sig Person {
 	// a predetermined queue of potential people
