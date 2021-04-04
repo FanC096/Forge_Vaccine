@@ -87,6 +87,7 @@ pred init {
 	initCapacity
 	// num vaccines = 6
 	vacRoom.numVaccines = sing[6]
+	vacRoom.productionStage = sing[0]
 	// people is in some linear order
 	isQueue
 }
@@ -257,8 +258,8 @@ pred traces{
 	after after after after after after after after after after doNothing
 	after after after after after after after after after after after obsToExit
 	after after after after after after after after after after after after obsToExit
-
+	after after after after after after after after after after after after after doNothing
 	// always (addToBallpark or ballToWaiting or doNothing)
 }
 
-run {traces} for exactly 10 Person, 8 Int
+run {traces} for exactly 10 Person, 7 Int
