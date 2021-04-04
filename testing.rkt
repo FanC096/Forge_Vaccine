@@ -203,7 +203,7 @@ pred vacToObs{
 }
 
 pred obsToExitGuard{
-	some p: Person | {
+	some p: obsRoom.people | {
 		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
 	}
 }
@@ -212,7 +212,7 @@ pred obsToExit{
 	obsToExitGuard
 
 	// once (doNothing and once(doNothing and once (doNothing and once p in obsRoom))) then move p to exit
-	some p: Person | {
+	some p: obsRoom.people | {
 		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
 		people' = people - obsRoom->p
 	}
