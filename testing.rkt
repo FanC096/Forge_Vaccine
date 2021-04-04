@@ -20,7 +20,7 @@ sig Person {
 
 one sig NextPersonTracker{
 	// keeps track of the next person (not in our system yet)
-	var nextPerson: one Person
+	var nextPerson: lone Person
 }
 
 abstract sig Room {
@@ -128,7 +128,7 @@ pred addToBallpark{
 	// P goes from ballpark to waiting room, then
 	// Ballpark.people - P = Ballpark.people’  or  Ballpark.people - P + lastPerson.next= Ballpark.people’
 	// else Ballpark.people = Ballpark.people’ or Ballpark.people + lastPerson.next = Ballpark.people’
-	some NextPersonTracker.nextPerson.next
+	some NextPersonTracker.nextPerson
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson.next
 	people' = people + Ballpark->NextPersonTracker.nextPerson
 	vacRoom.numVaccines' = vacRoom.numVaccines
