@@ -20,7 +20,7 @@ sig Person {
 
 one sig NextPersonTracker{
 	// keeps track of the next person (not in our system yet)
-	var nextPerson: one Person
+	var nextPerson: lone Person
 }
 
 abstract sig Room {
