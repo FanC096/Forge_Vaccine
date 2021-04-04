@@ -103,13 +103,6 @@ pred roomConstraints{
 // 5 minutes goes by
 pred doNothing {
 	// everything stays the same
-	/*
-	not ballToWaitingGuard
-	not waitingToVacGuard
-	not vacToObsGuard
-	not obsToExitGuard
-	not makeVacGuard
-	*/
 
 	people' = people
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
@@ -203,7 +196,7 @@ pred vacToObs{
 }
 
 pred obsToExitGuard{
-	some p: obsRoom.people | {
+	some p: Person | {
 		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
 	}
 }
@@ -212,7 +205,7 @@ pred obsToExit{
 	obsToExitGuard
 
 	// once (doNothing and once(doNothing and once (doNothing and once p in obsRoom))) then move p to exit
-	some p: obsRoom.people | {
+	some p: Person | {
 		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
 		people' = people - obsRoom->p
 	}
@@ -244,6 +237,7 @@ pred makeVaccines {
 
 pred traces{
 	// run everything
+	/*
 	init
 	addToBallpark
 	after ballToWaiting
@@ -259,7 +253,10 @@ pred traces{
 	after after after after after after after after after after after obsToExit
 	after after after after after after after after after after after after obsToExit
 	after after after after after after after after after after after after after doNothing
-	// always (addToBallpark or ballToWaiting or doNothing)
+	*/
+
+	init
+	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard))
 }
 
 run {traces} for exactly 10 Person, 7 Int
