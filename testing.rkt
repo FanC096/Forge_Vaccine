@@ -99,8 +99,35 @@ pred roomConstraints{
 
 // ====== Transitions ========
 
-// need to make sure that only one transistion happens (one person moves) in each state
+// 5 minutes goes by
+pred doNothing {
+	// everything stays the same
+	/*
+	not ballToWaitingGuard
+	not waitingToVacGuard
+	not vacToObsGuard
+	not obsToExitGuard
+	not makeVacGuard
+	*/
 
+	people' = people
+	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
+	Clock.timer' = sing[add[sum[Clock.timer], 1]]
+
+	// making the vaccine every 3 cycles
+	vacRoom.productionStage = sing[3] implies vacRoom.productionStage' = sing[2]
+	vacRoom.productionStage = sing[2] implies vacRoom.productionStage' = sing[1]
+	vacRoom.productionStage = sing[1] implies vacRoom.productionStage' = sing[0]
+	vacRoom.productionStage = sing[0] implies vacRoom.productionStage' = sing[0]
+
+	vacRoom.productionStage = sing[1] implies vacRoom.numVaccines' = sing[add[sum[vacRoom.numVaccines], 6]]
+	vacRoom.productionStage != sing[1] implies vacRoom.numVaccines' = vacRoom.numVaccines
+
+}
+
+
+
+// need to make sure that only one transistion happens (one person moves) in each state
 pred addToBallpark{
 	// add ppl to the ballpark
 	// or
@@ -196,7 +223,7 @@ pred obsToExit{
 }
 
 pred makeVacGuard {
-	#waitingRoom.people > vacRoom.numVaccines
+	#waitingRoom.people > sum[vacRoom.numVaccines]
 	vacRoom.productionStage = sing[0] // no vaccine is getting made
 }
 
@@ -213,31 +240,6 @@ pred makeVaccines {
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 }
 
-// 5 minutes goes by
-pred doNothing {
-	// everything stays the same
-	/*
-	not ballToWaitingGuard
-	not waitingToVacGuard
-	not vacToObsGuard
-	not obsToExitGuard
-	not makeVacGuard
-	*/
-
-	people' = people
-	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
-	Clock.timer' = sing[sum[Clock.timer, sing[1]]]
-
-	// making the vaccine every 3 cycles
-	vacRoom.productionStage = sing[3] implies vacRoom.productionStage' = sing[2]
-	vacRoom.productionStage = sing[2] implies vacRoom.productionStage' = sing[1]
-	vacRoom.productionStage = sing[1] implies vacRoom.productionStage' = sing[0]
-	vacRoom.productionStage = sing[0] implies vacRoom.productionStage' = sing[0]
-
-	vacRoom.productionStage = sing[1] implies vacRoom.numVaccines' = sing[sum[vacRoom.numVaccines, sing[6]]]
-	vacRoom.productionStage != sing[1] implies vacRoom.numVaccines' = vacRoom.numVaccines
-
-}
 
 pred traces{
 	// run everything
