@@ -137,7 +137,7 @@ pred ballToWaiting{
 pred waitingToVacGuard{
 	// vaccination room must have room
 	#(vacRoom.people) < sum[vacRoom.capacity]
-	#numVaccines > sing[0]
+	#numVaccines > 0
 	some p: Person | { p in waitingRoom.people }
 }
 
@@ -152,7 +152,7 @@ pred waitingToVac {
 		people' = people - waitingRoom->p + vacRoom->p
 	}
 	// subtract 1 from #vaccines
-	#numVaccines' = subtract[sum[#numVaccines], 1]
+	vacRoom.numVaccines' = sing[subtract[sum[vacRoom.numVaccines], 1]]
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 	Clock.timer' = Clock.timer
 	vacRoom.productionStage = vacRoom.productionStage'
@@ -168,7 +168,7 @@ pred vacToObs{
 
 	vacToObsGuard
 	vacRoom.numVaccines' = vacRoom.numVaccines
-	people’ = people - vacRoom->Person + obsRoom->(vacRoom.people)
+	people' = people - vacRoom->Person + obsRoom->(vacRoom.people)
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 	Clock.timer' = Clock.timer
 	vacRoom.productionStage = vacRoom.productionStage'
