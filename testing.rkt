@@ -238,7 +238,7 @@ pred makeVaccines {
 
 pred traces{
 	// run everything
-	/*
+	
 	init
 	addToBallpark
 	after ballToWaiting
@@ -254,10 +254,10 @@ pred traces{
 	after after after after after after after after after after after obsToExit
 	after after after after after after after after after after after after obsToExit
 	after after after after after after after after after after after after after doNothing
-	*/
+	
 
-	init
-	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard))
+	//init
+//	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard))
 }
 
 run {traces} for exactly 10 Person, 7 Int
