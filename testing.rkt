@@ -11,7 +11,7 @@
 // obsRoom stay 20 minutes
 
 option problem_type temporal
-option max_tracelength 40
+option max_tracelength 15
 
 sig Person {
 	// a predetermined queue of potential people
@@ -74,12 +74,33 @@ pred initCapacity{
 pred init {
 	// Ballpark queue = 5 ppl
 	Clock.timer = sing[0]
+
+	/*
 	#(Ballpark.people) = 5
 	some head: Person | {
 		no next.head
 		// points to the next person in line (haven't arrived at Ballpark yet)
 		NextPersonTracker.nextPerson = head.next.next.next.next.next
 		Ballpark.people = head + head.next + head.next.next + head.next.next.next + head.next.next.next.next
+	}
+	*/
+
+	// 2 persons
+	/* #(Ballpark.people) = 2
+	some head: Person | {
+		no next.head
+		// points to the next person in line (haven't arrived at Ballpark yet)
+		NextPersonTracker.nextPerson = head.next.next
+		Ballpark.people = head + head.next
+	} */
+
+	// 1 person
+	#(Ballpark.people) = 1
+	some head: Person | {
+		no next.head
+		// points to the next person in line (haven't arrived at Ballpark yet)
+		NextPersonTracker.nextPerson = head.next
+		Ballpark.people = head
 	}
 	// all other rooms are empty
 	no (people - Ballpark->Person)
@@ -89,7 +110,7 @@ pred init {
 	vacRoom.numVaccines = sing[6]
 	vacRoom.productionStage = sing[0]
 	// people is in some linear order
-	isQueue
+	//isQueue
 }
 
 // maybe not enforce
@@ -257,7 +278,9 @@ pred traces{
 	*/
 
 	init
-	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard))
+	/* always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard)) */
+
+	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing)
 }
 
-run {traces} for exactly 10 Person, 7 Int
+run {traces} for exactly 1 Person, 5 Int
