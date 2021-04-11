@@ -250,12 +250,20 @@ pred makeVaccines {
 	makeVacGuard
 
 	vacRoom.productionStage' = sing[3]
+	vacRoom.numVaccines' = vacRoom.numVaccines
 	// vacRoom.numVaccines' = sing[sum[vacRoom.numVaccines, sing[6]]]
 	people' = people
 	Clock.timer' = Clock.timer
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 }
 
+pred doAbosolutelyNothing{
+	people' = people
+	Clock.timer' = Clock.timer
+	vacRoom.numVaccines' = vacRoom.numVaccines
+	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
+	vacRoom.productionStage' = vacRoom.productionStage
+}
 
 pred traces{
 	// run everything
@@ -280,7 +288,18 @@ pred traces{
 	init
 	/* always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard)) */
 
-	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing)
+	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing)
+	// ballToWaiting
+	// after waitingToVac
+	// after after doNothing
+	// after after after vacToObs
+	// after after after after doNothing
+	// after after after after after doNothing
+	// after after after after after after doNothing
+	// after after after after after after after doNothing
+	// after after after after after after after after obsToExit
+	// after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)
+	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
 }
 
 run {traces} for exactly 1 Person, 5 Int
