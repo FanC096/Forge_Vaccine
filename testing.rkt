@@ -288,7 +288,7 @@ pred traces{
 	init
 	/* always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard)) */
 
-	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing)
+	// // always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing)
 	// ballToWaiting
 	// after waitingToVac
 	// after after doNothing
@@ -299,7 +299,9 @@ pred traces{
 	// after after after after after after after doNothing
 	// after after after after after after after after obsToExit
 	// after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)
-	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
+
+
+	always (ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
 }
 
 run {traces} for exactly 1 Person, 5 Int
