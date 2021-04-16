@@ -53,6 +53,7 @@ one sig Clock{
 // (for waiting: make a doNothing for each room (each state has a different time amt))
 
 pred isQueue {
+	no (^next) & iden
 	some head: Person | some tail: Person{
 		all p: (Person - head) | one next.p
 		all p: (Person - tail) | one p.next
@@ -239,25 +240,25 @@ pred makeVaccines {
 pred traces{
 	// run everything
 	
-	init
-	addToBallpark
-	after ballToWaiting
-	after after ballToWaiting
-	after after after waitingToVac
-	after after after after waitingToVac
-	after after after after after doNothing
-	after after after after after after vacToObs
-	after after after after after after after doNothing
-	after after after after after after after after doNothing
-	after after after after after after after after after doNothing
-	after after after after after after after after after after doNothing
-	after after after after after after after after after after after obsToExit
-	after after after after after after after after after after after after obsToExit
-	after after after after after after after after after after after after after doNothing
+	// init
+	// addToBallpark
+	// after ballToWaiting
+	// after after ballToWaiting
+	// after after after waitingToVac
+	// after after after after waitingToVac
+	// after after after after after doNothing
+	// after after after after after after vacToObs
+	// after after after after after after after doNothing
+	// after after after after after after after after doNothing
+	// after after after after after after after after after doNothing
+	// after after after after after after after after after after doNothing
+	// after after after after after after after after after after after obsToExit
+	// after after after after after after after after after after after after obsToExit
+	// after after after after after after after after after after after after after doNothing
 	
 
-	//init
-//	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard))
+	init
+	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard))
 }
 
 run {traces} for exactly 10 Person, 7 Int
