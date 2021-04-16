@@ -53,6 +53,7 @@ one sig Clock{
 // (for waiting: make a doNothing for each room (each state has a different time amt))
 
 pred isQueue {
+	no (^next) & iden
 	some head: Person | some tail: Person{
 		all p: (Person - head) | one next.p
 		all p: (Person - tail) | one p.next
@@ -289,7 +290,7 @@ pred traces{
 	/* always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard)) */
 
 	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing)
-	
+
 	ballToWaiting
 	after waitingToVac
 	after after doNothing
