@@ -266,6 +266,10 @@ pred doAbosolutelyNothing{
 	vacRoom.productionStage' = vacRoom.productionStage
 }
 
+pred doNothingGuard{
+	(#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
+}
+
 pred traces{
 	// run everything
 	/*
@@ -293,17 +297,17 @@ pred traces{
 
 	// ballToWaiting
 	// after waitingToVac
-	// after after doNothing
+	// after after (doNothing and doNothingGuard)
 	// after after after vacToObs
-	// after after after after doNothing
-	// after after after after after doNothing
-	// after after after after after after doNothing
-	// after after after after after after after doNothing
+	// after after after after (doNothing and doNothingGuard)
+	// after after after after after (doNothing and doNothingGuard)
+	// after after after after after after (doNothing and doNothingGuard)
+	// after after after after after after after (doNothing and doNothingGuard)
 	// after after after after after after after after obsToExit
 	// after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)
 
 
-	always (ballToWaiting or waitingToVac or doNothing or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
+	always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
 }
 
 run {traces} for exactly 1 Person, 5 Int
