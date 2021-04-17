@@ -235,7 +235,9 @@ pred makeVaccines {
 	Clock.timer' = Clock.timer
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 }
-
+pred doNothingGuard{
+	(#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
+}
 
 pred traces{
 	// run everything
@@ -258,7 +260,7 @@ pred traces{
 	
 
 	init
-	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard))
+	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
 }
 
 run {traces} for exactly 10 Person, 7 Int
