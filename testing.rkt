@@ -108,13 +108,6 @@ pred roomConstraints{
 }
 
 // ====== Transitions ========
-
-// QC
-pred doNothingGuard{
-
-	// (#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
-}
-
 // QC
 // 5 minutes goes by
 pred doNothing {
@@ -173,70 +166,70 @@ pred ballToWaiting{
 }
 
 // proper transition
-test expect {
-	ballToWaitingTest1: {
-			some Person0, Person1, Person2 : Person | {
-				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
-				next = Person0 -> Person1 + Person1 -> Person2
+// test expect {
+// 	ballToWaitingTest1: {
+// 			some Person0, Person1, Person2 : Person | {
+// 				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+// 				next = Person0 -> Person1 + Person1 -> Person2
 
 
-				//pre
-				Ballpark.people = Person0 + Person1
-				no waitingRoom.people
-				no vacRoom.people
-				no obsRoom.people
+// 				//pre
+// 				Ballpark.people = Person0 + Person1
+// 				no waitingRoom.people
+// 				no vacRoom.people
+// 				no obsRoom.people
 
-				NextPersonTracker.nextPerson = Person2
-				Clock.timer = sing[0]
-				vacRoom.numVaccines' = sing[6]
+// 				NextPersonTracker.nextPerson = Person2
+// 				Clock.timer = sing[0]
+// 				vacRoom.numVaccines' = sing[6]
 
 
-				//post
-				Ballpark.people' = Person1
-				waitingRoom.people' = Person0
-				no vacRoom.people'
-				no obsRoom.people'
+// 				//post
+// 				Ballpark.people' = Person1
+// 				waitingRoom.people' = Person0
+// 				no vacRoom.people'
+// 				no obsRoom.people'
 
-				NextPersonTracker.nextPerson' = Person2
-				Clock.timer' = sing[0]
-				vacRoom.numVaccines' = vacRoom.numVaccines
-				vacRoom.productionStage' = vacRoom.productionStage
+// 				NextPersonTracker.nextPerson' = Person2
+// 				Clock.timer' = sing[0]
+// 				vacRoom.numVaccines' = vacRoom.numVaccines
+// 				vacRoom.productionStage' = vacRoom.productionStage
 
-				ballToWaiting
-			}
-	} is sat 
+// 				ballToWaiting
+// 			}
+// 	} is sat 
 
-	// Person from the middle of the line moves-- not the front (unsat)
-	ballToWaitingTest2: {
-			some Person0, Person1, Person2 : Person | {
-				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
-				next = Person0 -> Person1 + Person1 -> Person2
+// 	// Person from the middle of the line moves-- not the front (unsat)
+// 	ballToWaitingTest2: {
+// 			some Person0, Person1, Person2 : Person | {
+// 				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+// 				next = Person0 -> Person1 + Person1 -> Person2
 
-				//pre
-				Ballpark.people = Person0 + Person1
-				no waitingRoom.people
-				no vacRoom.people
-				no obsRoom.people
+// 				//pre
+// 				Ballpark.people = Person0 + Person1
+// 				no waitingRoom.people
+// 				no vacRoom.people
+// 				no obsRoom.people
 
-				NextPersonTracker.nextPerson = Person2
-				Clock.timer = sing[0]
-				vacRoom.numVaccines' = sing[6]
+// 				NextPersonTracker.nextPerson = Person2
+// 				Clock.timer = sing[0]
+// 				vacRoom.numVaccines' = sing[6]
 
-				//post
-				Ballpark.people' = Person0
-				waitingRoom.people' = Person1
-				no vacRoom.people'
-				no obsRoom.people'
+// 				//post
+// 				Ballpark.people' = Person0
+// 				waitingRoom.people' = Person1
+// 				no vacRoom.people'
+// 				no obsRoom.people'
 
-				NextPersonTracker.nextPerson' = Person2
-				Clock.timer' = sing[0]
-				vacRoom.numVaccines' = vacRoom.numVaccines
-				vacRoom.productionStage' = vacRoom.productionStage
+// 				NextPersonTracker.nextPerson' = Person2
+// 				Clock.timer' = sing[0]
+// 				vacRoom.numVaccines' = vacRoom.numVaccines
+// 				vacRoom.productionStage' = vacRoom.productionStage
 
-				ballToWaiting
-			}
-	} is unsat 
-}
+// 				ballToWaiting
+// 			}
+// 	} is unsat 
+// }
 
 
 
@@ -290,7 +283,7 @@ pred vacToObs{
 pred obsToExitGuard{
 	some p: Person | {
 		p in obsRoom.people
-		once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
+		before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 	}
 }
 
@@ -301,7 +294,7 @@ pred obsToExit{
 	// once (doNothing and once(doNothing and once (doNothing and once p in obsRoom))) then move p to exit
 	some p: Person | {
 		p in obsRoom.people
-		once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
+		before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 		people' = people - obsRoom->p
 	}
 
@@ -331,6 +324,16 @@ pred makeVaccines {
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 }
 
+// QC
+pred doNothingGuard{
+	not ballToWaitingGuard
+	not waitingToVacGuard
+	not vacToObsGuard
+	not obsToExitGuard
+	not makeVacGuard
+	// (#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
+}
+
 pred traces{
 	// run everything
 	
@@ -352,6 +355,26 @@ pred traces{
 
 	// init
 	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
+}
+
+test expect{
+	ISSAT: {
+		init
+		addToBallpark
+		after ballToWaiting
+		after after ballToWaiting
+		after after after waitingToVac
+		after after after after waitingToVac
+		after after after after after doNothing
+		after after after after after after vacToObs
+		after after after after after after after doNothing
+		after after after after after after after after doNothing
+		after after after after after after after after after doNothing
+		after after after after after after after after after after doNothing
+		after after after after after after after after after after after obsToExit
+		after after after after after after after after after after after after obsToExit
+		after after after after after after after after after after after after after doNothing
+	} is sat
 }
 
 // test expect{
