@@ -295,19 +295,40 @@ pred traces{
 
 	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing)
 
-	// ballToWaiting
-	// after waitingToVac
-	// after after (doNothing and doNothingGuard)
-	// after after after vacToObs
-	// after after after after (doNothing and doNothingGuard)
-	// after after after after after (doNothing and doNothingGuard)
-	// after after after after after after (doNothing and doNothingGuard)
-	// after after after after after after after (doNothing and doNothingGuard)
-	// after after after after after after after after obsToExit
-	// after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)
+	ballToWaiting
+	after waitingToVac
+	after after (doNothing and doNothingGuard)
+	after after after vacToObs
+	after after after after (doNothing and doNothingGuard)
+	after after after after after (doNothing and doNothingGuard)
+	after after after after after after (doNothing and doNothingGuard)
+	after after after after after after after (doNothing and doNothingGuard)
+	after after after after after after after after obsToExit
+	after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)
 
 
 	always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
 }
 
-run {traces} for exactly 1 Person, 5 Int
+test expect {
+	// thm: {
+	// 	{
+	// 	init
+	// 	ballToWaiting
+	// 	after waitingToVac
+	// 	after after (doNothing and doNothingGuard)
+	// 	after after after vacToObs
+	// 	after after after after (doNothing and doNothingGuard)
+	// 	after after after after after (doNothing and doNothingGuard)
+	// 	after after after after after after (doNothing and doNothingGuard)
+	// 	after after after after after after after (doNothing and doNothingGuard)
+	// 	after after after after after after after after obsToExit
+	// 	after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)}
+	// 	implies (always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)))
+	// } for 1 Person is theorem
+	thm2: {
+	  (always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)))
+	} for 1 Person is sat
+}
+
+// run {traces} for exactly 1 Person, 5 Int
