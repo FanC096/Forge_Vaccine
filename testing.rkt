@@ -56,16 +56,18 @@ one sig Clock{
 
 // AK
 pred isQueue {
-	no (^next) & iden
-	some head: Person | some tail: Person{
-		all p: (Person - head) | one next.p
-		all p: (Person - tail) | one p.next
-		no next.head
-		one head.next
-		no tail.next
-		one next.tail
-		head.*next = Person
-	}
+    #(Person) >= 2 implies {
+        no (^next) & iden
+        some head: Person | some tail: Person {
+            all p: (Person - head) | one next.p
+            all p: (Person - tail) | one p.next
+            no next.head
+            one head.next
+            no tail.next
+            one next.tail
+            head.*next = Person
+        }
+    }
 }
 
 
