@@ -111,7 +111,8 @@ pred roomConstraints{
 
 // QC
 pred doNothingGuard{
-	(#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
+
+	// (#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
 }
 
 // QC
@@ -288,7 +289,8 @@ pred vacToObs{
 // SM
 pred obsToExitGuard{
 	some p: Person | {
-		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
+		p in obsRoom.people
+		once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 	}
 }
 
@@ -298,7 +300,8 @@ pred obsToExit{
 
 	// once (doNothing and once(doNothing and once (doNothing and once p in obsRoom))) then move p to exit
 	some p: Person | {
-		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
+		p in obsRoom.people
+		once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 		people' = people - obsRoom->p
 	}
 
@@ -331,24 +334,24 @@ pred makeVaccines {
 pred traces{
 	// run everything
 	
-	// init
-	// addToBallpark
-	// after ballToWaiting
-	// after after ballToWaiting
-	// after after after waitingToVac
-	// after after after after waitingToVac
-	// after after after after after doNothing
-	// after after after after after after vacToObs
-	// after after after after after after after doNothing
-	// after after after after after after after after doNothing
-	// after after after after after after after after after doNothing
-	// after after after after after after after after after after doNothing
-	// after after after after after after after after after after after obsToExit
-	// after after after after after after after after after after after after obsToExit
-	// after after after after after after after after after after after after after doNothing
-
 	init
-	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
+	addToBallpark
+	after ballToWaiting
+	after after ballToWaiting
+	after after after waitingToVac
+	after after after after waitingToVac
+	after after after after after doNothing
+	after after after after after after vacToObs
+	after after after after after after after doNothing
+	after after after after after after after after doNothing
+	after after after after after after after after after doNothing
+	after after after after after after after after after after doNothing
+	after after after after after after after after after after after obsToExit
+	after after after after after after after after after after after after obsToExit
+	after after after after after after after after after after after after after doNothing
+
+	// init
+	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
 }
 
 // test expect{
