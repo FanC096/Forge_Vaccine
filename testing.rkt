@@ -12,7 +12,7 @@
 
 option problem_type temporal
 //option max_tracelength 200
-option max_tracelength 100
+option max_tracelength 20
 
 sig Person {
 	// a predetermined queue of potential people
