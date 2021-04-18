@@ -374,7 +374,7 @@ test expect{
 		after after after after after after after after after after after obsToExit
 		after after after after after after after after after after after after obsToExit
 		after after after after after after after after after after after after after doNothing
-	} is sat
+	} for 10 Person is sat
 }
 
 // test expect{
