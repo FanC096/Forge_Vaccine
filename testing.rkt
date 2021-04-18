@@ -12,6 +12,7 @@
 
 option problem_type temporal
 option max_tracelength 10
+option verbose 5
 
 sig Person {
 	// a predetermined queue of potential people
@@ -328,7 +329,7 @@ test expect {
 	// } for 1 Person is theorem
 	thm2: {
 	  (always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)))
-	} for 1 Person is sat
+	} for 1 Person is unsat
 }
 
 // run {traces} for exactly 1 Person, 5 Int
