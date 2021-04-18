@@ -12,7 +12,7 @@
 
 option problem_type temporal
 //option max_tracelength 200
-option max_tracelength 5
+option max_tracelength 100
 
 sig Person {
 	// a predetermined queue of potential people
@@ -112,6 +112,44 @@ pred doNothingGuard{
 	(#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
 }
 
+test expect {
+	doNothingGuardTest1: {
+			some Person0, Person1, Person2 : Person | {
+				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+				next = Person0 -> Person1 + Person1 -> Person2
+
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people
+				no obsRoom.people
+
+				NextPersonTracker.nextPerson = Person2
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[6]
+
+				doNothingGuard
+			}
+	} is unsat 
+
+	doNothingGuardTest2: {
+		some Person0, Person1, Person2 : Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+			no Ballpark.people 
+			no waitingRoom.people
+			vacRoom.people = Person1 + Person2
+			no obsRoom.people
+
+			no NextPersonTracker.nextPerson
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[6]
+
+			doNothingGuard
+		}
+	} is sat 
+}
+
 // QC
 // 5 minutes goes by
 pred doNothing {
@@ -131,6 +169,170 @@ pred doNothing {
 	vacRoom.productionStage != sing[1] implies vacRoom.numVaccines' = vacRoom.numVaccines
 }
 
+test expect {
+	doNothingTest1: {
+			some Person0, Person1, Person2 : Person | {
+				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+				next = Person0 -> Person1 + Person1 -> Person2
+
+
+				//pre
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people
+				no obsRoom.people
+
+				NextPersonTracker.nextPerson = Person2
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[6]
+				vacRoom.productionStage = sing[0]
+
+
+				//post
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people'
+				no obsRoom.people'
+
+				NextPersonTracker.nextPerson' = Person2
+				Clock.timer' = sing[1]
+				vacRoom.numVaccines' = vacRoom.numVaccines
+				vacRoom.numVaccines = sing[6]
+				vacRoom.productionStage = sing[0]
+
+				doNothing
+			}
+	} is sat 
+
+	doNothingTest2: {
+			some Person0, Person1, Person2 : Person | {
+				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+				next = Person0 -> Person1 + Person1 -> Person2
+
+
+				//pre
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people
+				no obsRoom.people
+
+				NextPersonTracker.nextPerson = Person2
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[6]
+				vacRoom.productionStage = sing[0]
+
+
+				//post
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people'
+				no obsRoom.people'
+
+				NextPersonTracker.nextPerson' = Person2
+				Clock.timer' = sing[0]
+				vacRoom.numVaccines' = sing[6]
+				vacRoom.productionStage = sing[0]
+
+				doNothing
+			}
+	} is unsat 
+
+	doNothingTest3: {
+			some Person0, Person1, Person2 : Person | {
+				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+				next = Person0 -> Person1 + Person1 -> Person2
+
+
+				//pre
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people
+				no obsRoom.people
+
+				NextPersonTracker.nextPerson = Person2
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[6]
+				vacRoom.productionStage = sing[0]
+
+				//post
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people'
+				no obsRoom.people'
+
+				NextPersonTracker.nextPerson' = Person2
+				Clock.timer' = sing[1]
+				vacRoom.numVaccines' = sing[5]
+				vacRoom.productionStage = sing[0]
+
+				doNothing
+			}
+	} is unsat 
+
+	doNothingTest4: {
+		some Person0, Person1, Person2 : Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+
+			//pre
+			Ballpark.people = Person0 + Person1
+			no waitingRoom.people
+			no vacRoom.people
+			no obsRoom.people
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[6]
+			vacRoom.productionStage = sing[2]
+
+			//post
+			Ballpark.people = Person0 + Person1
+			no waitingRoom.people
+			no vacRoom.people'
+			no obsRoom.people'
+
+			NextPersonTracker.nextPerson' = Person2
+			Clock.timer' = sing[1]
+			vacRoom.numVaccines' = sing[5]
+			vacRoom.productionStage = sing[3]
+
+			doNothing
+		}
+	} is unsat 
+
+	doNothingTest5: {
+		some Person0, Person1, Person2 : Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+
+			//pre
+			Ballpark.people = Person0 + Person1
+			no waitingRoom.people
+			no vacRoom.people
+			no obsRoom.people
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[0]
+			vacRoom.productionStage = sing[1]
+
+			//post
+			Ballpark.people = Person0 + Person1
+			no waitingRoom.people
+			no vacRoom.people'
+			no obsRoom.people'
+
+			NextPersonTracker.nextPerson' = Person2
+			Clock.timer' = sing[1]
+			vacRoom.numVaccines' = sing[6]
+			vacRoom.productionStage = sing[0]
+
+			doNothing
+		}
+	} is sat 
+}	
 
 // AK
 // need to make sure that only one transistion happens (one person moves) in each state
@@ -171,70 +373,70 @@ pred ballToWaiting{
 }
 
 // proper transition
-test expect {
-	ballToWaitingTest1: {
-			some Person0, Person1, Person2 : Person | {
-				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
-				next = Person0 -> Person1 + Person1 -> Person2
+// test expect {
+// 	ballToWaitingTest1: {
+// 			some Person0, Person1, Person2 : Person | {
+// 				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+// 				next = Person0 -> Person1 + Person1 -> Person2
 
 
-				//pre
-				Ballpark.people = Person0 + Person1
-				no waitingRoom.people
-				no vacRoom.people
-				no obsRoom.people
+// 				//pre
+// 				Ballpark.people = Person0 + Person1
+// 				no waitingRoom.people
+// 				no vacRoom.people
+// 				no obsRoom.people
 
-				NextPersonTracker.nextPerson = Person2
-				Clock.timer = sing[0]
-				vacRoom.numVaccines' = sing[6]
+// 				NextPersonTracker.nextPerson = Person2
+// 				Clock.timer = sing[0]
+// 				vacRoom.numVaccines' = sing[6]
 
 
-				//post
-				Ballpark.people' = Person1
-				waitingRoom.people' = Person0
-				no vacRoom.people'
-				no obsRoom.people'
+// 				//post
+// 				Ballpark.people' = Person1
+// 				waitingRoom.people' = Person0
+// 				no vacRoom.people'
+// 				no obsRoom.people'
 
-				NextPersonTracker.nextPerson' = Person2
-				Clock.timer' = sing[0]
-				vacRoom.numVaccines' = vacRoom.numVaccines
-				vacRoom.productionStage' = vacRoom.productionStage
+// 				NextPersonTracker.nextPerson' = Person2
+// 				Clock.timer' = sing[0]
+// 				vacRoom.numVaccines' = vacRoom.numVaccines
+// 				vacRoom.productionStage' = vacRoom.productionStage
 
-				ballToWaiting
-			}
-	} is sat 
+// 				ballToWaiting
+// 			}
+// 	} is sat 
 
-	// Person from the middle of the line moves-- not the front (unsat)
-	ballToWaitingTest2: {
-			some Person0, Person1, Person2 : Person | {
-				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
-				next = Person0 -> Person1 + Person1 -> Person2
+// 	// Person from the middle of the line moves-- not the front (unsat)
+// 	ballToWaitingTest2: {
+// 			some Person0, Person1, Person2 : Person | {
+// 				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+// 				next = Person0 -> Person1 + Person1 -> Person2
 
-				//pre
-				Ballpark.people = Person0 + Person1
-				no waitingRoom.people
-				no vacRoom.people
-				no obsRoom.people
+// 				//pre
+// 				Ballpark.people = Person0 + Person1
+// 				no waitingRoom.people
+// 				no vacRoom.people
+// 				no obsRoom.people
 
-				NextPersonTracker.nextPerson = Person2
-				Clock.timer = sing[0]
-				vacRoom.numVaccines' = sing[6]
+// 				NextPersonTracker.nextPerson = Person2
+// 				Clock.timer = sing[0]
+// 				vacRoom.numVaccines' = sing[6]
 
-				//post
-				Ballpark.people' = Person0
-				waitingRoom.people' = Person1
-				no vacRoom.people'
-				no obsRoom.people'
+// 				//post
+// 				Ballpark.people' = Person0
+// 				waitingRoom.people' = Person1
+// 				no vacRoom.people'
+// 				no obsRoom.people'
 
-				NextPersonTracker.nextPerson' = Person2
-				Clock.timer' = sing[0]
-				vacRoom.numVaccines' = vacRoom.numVaccines
-				vacRoom.productionStage' = vacRoom.productionStage
+// 				NextPersonTracker.nextPerson' = Person2
+// 				Clock.timer' = sing[0]
+// 				vacRoom.numVaccines' = vacRoom.numVaccines
+// 				vacRoom.productionStage' = vacRoom.productionStage
 
-				ballToWaiting
-			}
-	} is unsat 
-}
+// 				ballToWaiting
+// 			}
+// 	} is unsat 
+// }
 
 
 
@@ -350,4 +552,9 @@ pred traces{
 	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
 }
 
+// test expect{
+// 	ISSAT: {
+// 		always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
+// 	} for 10 Person is sat
+// }
 //run {traces} for exactly 10 Person, 7 Int
