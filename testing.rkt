@@ -12,7 +12,7 @@
 
 option problem_type temporal
 option max_tracelength 10
-option verbose 5
+// option verbose 5
 
 sig Person {
 	// a predetermined queue of potential people
@@ -204,33 +204,44 @@ pred waitingToVac {
 }
 
 pred vacToObsGuard{
-	before doNothing
+	some vacRoom.people
+	all p: vacRoom.people | {
+		before once (doNothing and p in vacRoom.people)
+	}
 	#(obsRoom.people) < sum[obsRoom.capacity]
 }
 
+
+// YR
 pred vacToObs{
 	// now we assume that vaccine takes one cycle (same time as doNothing) to be shot, and people can only come in at the beginning of the cycle
 
 	vacToObsGuard
 	vacRoom.numVaccines' = vacRoom.numVaccines
+	
 	people' = people - vacRoom->Person + obsRoom->(vacRoom.people)
+
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 	Clock.timer' = Clock.timer
 	vacRoom.productionStage = vacRoom.productionStage'
 }
 
+// SM
 pred obsToExitGuard{
 	some p: Person | {
-		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
+		p in obsRoom.people
+		before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 	}
 }
 
+// SM
 pred obsToExit{
 	obsToExitGuard
 
 	// once (doNothing and once(doNothing and once (doNothing and once p in obsRoom))) then move p to exit
 	some p: Person | {
-		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
+		p in obsRoom.people
+		before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 		people' = people - obsRoom->p
 	}
 
@@ -239,6 +250,7 @@ pred obsToExit{
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 	vacRoom.productionStage = vacRoom.productionStage'
 }
+
 
 pred makeVacGuard {
 	#waitingRoom.people > sum[vacRoom.numVaccines]
@@ -317,24 +329,25 @@ pred traces{
 }
 
 test expect {
-	// thm: {
-	// 	{
-	// 	init
-	// 	ballToWaiting
-	// 	after waitingToVac
-	// 	after after (doNothing and doNothingGuard)
-	// 	after after after vacToObs
-	// 	after after after after (doNothing and doNothingGuard)
-	// 	after after after after after (doNothing and doNothingGuard)
-	// 	after after after after after after (doNothing and doNothingGuard)
-	// 	after after after after after after after (doNothing and doNothingGuard)
-	// 	after after after after after after after after obsToExit
-	// 	after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)}
-	// 	implies (always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)))
-	// } for 1 Person is theorem
-	thm2: {
-	  (always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)))
-	} for 1 Person is unsat
+	thm0: {
+		init
+		ballToWaiting
+		after waitingToVac
+		after after (doNothing and doNothingGuard)
+		after after after vacToObs
+		after after after after (doNothing and doNothingGuard)
+		after after after after after (doNothing and doNothingGuard)
+		after after after after after after (doNothing and doNothingGuard)
+		after after after after after after after (doNothing and doNothingGuard)
+		after after after after after after after after obsToExit
+		after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)
+	} for exactly 1 Person, 5 Int is sat
+	thm: {
+	  (init and always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)))
+	} for exactly 1 Person, 5 Int is sat
 }
 
+run{
+	init and always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
+} for exactly 1 Person, 5 Int
 // run {traces} for exactly 1 Person, 5 Int
