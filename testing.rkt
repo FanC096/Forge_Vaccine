@@ -387,7 +387,8 @@ pred traces_hard {
 // 		always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
 // 	} for 10 Person is sat
 // }
-//run {traces} for exactly 10 Person, 7 Int
+
+run {traces} for exactly 10 Person, 7 Int
 
 
 
