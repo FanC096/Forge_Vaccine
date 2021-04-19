@@ -165,74 +165,6 @@ pred ballToWaiting{
 	vacRoom.productionStage = vacRoom.productionStage'
 }
 
-// proper transition
-// test expect {
-// 	ballToWaitingTest1: {
-// 			some Person0, Person1, Person2 : Person | {
-// 				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
-// 				next = Person0 -> Person1 + Person1 -> Person2
-
-
-// 				//pre
-// 				Ballpark.people = Person0 + Person1
-// 				no waitingRoom.people
-// 				no vacRoom.people
-// 				no obsRoom.people
-
-// 				NextPersonTracker.nextPerson = Person2
-// 				Clock.timer = sing[0]
-// 				vacRoom.numVaccines' = sing[6]
-
-
-// 				//post
-// 				Ballpark.people' = Person1
-// 				waitingRoom.people' = Person0
-// 				no vacRoom.people'
-// 				no obsRoom.people'
-
-// 				NextPersonTracker.nextPerson' = Person2
-// 				Clock.timer' = sing[0]
-// 				vacRoom.numVaccines' = vacRoom.numVaccines
-// 				vacRoom.productionStage' = vacRoom.productionStage
-
-// 				ballToWaiting
-// 			}
-// 	} is sat
-
-// 	// Person from the middle of the line moves-- not the front (unsat)
-// 	ballToWaitingTest2: {
-// 			some Person0, Person1, Person2 : Person | {
-// 				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
-// 				next = Person0 -> Person1 + Person1 -> Person2
-
-// 				//pre
-// 				Ballpark.people = Person0 + Person1
-// 				no waitingRoom.people
-// 				no vacRoom.people
-// 				no obsRoom.people
-
-// 				NextPersonTracker.nextPerson = Person2
-// 				Clock.timer = sing[0]
-// 				vacRoom.numVaccines' = sing[6]
-
-// 				//post
-// 				Ballpark.people' = Person0
-// 				waitingRoom.people' = Person1
-// 				no vacRoom.people'
-// 				no obsRoom.people'
-
-// 				NextPersonTracker.nextPerson' = Person2
-// 				Clock.timer' = sing[0]
-// 				vacRoom.numVaccines' = vacRoom.numVaccines
-// 				vacRoom.productionStage' = vacRoom.productionStage
-
-// 				ballToWaiting
-// 			}
-// 	} is unsat
-// }
-
-
-
 
 // QC
 
@@ -388,7 +320,7 @@ pred traces_hard {
 // 	} for 10 Person is sat
 // }
 
-run {traces} for exactly 10 Person, 7 Int
+// run {traces} for exactly 10 Person, 7 Int
 
 
 
