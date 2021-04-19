@@ -11,9 +11,13 @@
 // obsRoom stay 20 minutes
 
 option problem_type temporal
+<<<<<<< HEAD
 // option max_tracelength 200
 // option max_tracelength 20
 option max_tracelength 6
+=======
+option max_tracelength 20
+>>>>>>> 03faa293447c634880f3b0741fe04e09ef452a6f
 
 sig Person {
 	// a predetermined queue of potential people
@@ -282,7 +286,8 @@ pred traces{
 // ======================================================
 //               	  Hardcoded Trace
 //
-//  This is a hardcoded trace, which we were able to get
+//  This is a hardcoded trace, which is able to run in time.
+//  This follows the journey of 2 people through the site.
 //  working. Check it out yourself (with the visualizer, viz.js)
 //  by uncommenting traces_hard and the run statement below it.
 // ======================================================
@@ -1554,6 +1559,7 @@ test expect {
 				no vacRoom.people
 				no obsRoom.people
 
+<<<<<<< HEAD
 				ballToWaitingGuard
 			}
 	} is sat 
@@ -1966,9 +1972,15 @@ test expect{
 	} for exactly 3 Person, 5 Int is sat 
 }
 
+<<<<<<< HEAD
 //======================================================
 //                 waitingToVac Tests
 //======================================================
+=======
+// ======================================================
+//                  waitingToVac Tests
+// ======================================================
+>>>>>>> 03faa293447c634880f3b0741fe04e09ef452a6f
 
 test expect{
 	waitingToVacTest1: {waitingToVac and not waitingToVacGuard} is unsat
@@ -2044,6 +2056,10 @@ test expect{
 // ======================================================
 //                  doNothingGuard Tests
 // ======================================================
+<<<<<<< HEAD
+=======
+
+>>>>>>> 03faa293447c634880f3b0741fe04e09ef452a6f
 
 test expect {
 	doNothingGuardTest1: {
