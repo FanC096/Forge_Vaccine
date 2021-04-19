@@ -11,7 +11,7 @@
 // obsRoom stay 20 minutes
 
 option problem_type temporal
-option max_tracelength 10
+option max_tracelength 12
 // option verbose 5
 
 sig Person {
@@ -289,29 +289,9 @@ pred doNothingGuard{
 }
 
 pred traces{
-	// run everything
-	/*
-	init
-	addToBallpark
-	after ballToWaiting
-	after after ballToWaiting
-	after after after waitingToVac
-	after after after after waitingToVac
-	after after after after after doNothing
-	after after after after after after vacToObs
-	after after after after after after after doNothing
-	after after after after after after after after doNothing
-	after after after after after after after after after doNothing
-	after after after after after after after after after after doNothing
-	after after after after after after after after after after after obsToExit
-	after after after after after after after after after after after after obsToExit
-	after after after after after after after after after after after after after doNothing
-	*/
+
 
 	init
-	/* always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and not ballToWaitingGuard and not waitingToVacGuard and not vacToObsGuard and not obsToExitGuard and not makeVacGuard)) */
-
-	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or doNothing)
 
 	ballToWaiting
 	after waitingToVac
@@ -325,29 +305,29 @@ pred traces{
 	after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)
 
 
-	always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
+	// always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
 }
 
-test expect {
-	thm0: {
-		init
-		ballToWaiting
-		after waitingToVac
-		after after (doNothing and doNothingGuard)
-		after after after vacToObs
-		after after after after (doNothing and doNothingGuard)
-		after after after after after (doNothing and doNothingGuard)
-		after after after after after after (doNothing and doNothingGuard)
-		after after after after after after after (doNothing and doNothingGuard)
-		after after after after after after after after obsToExit
-		after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)
-	} for exactly 1 Person, 5 Int is sat
-	thm: {
-	  (init and always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)))
-	} for exactly 1 Person, 5 Int is sat
-}
+// test expect {
+// 	thm0: {
+// 		init
+// 		ballToWaiting
+// 		after waitingToVac
+// 		after after (doNothing and doNothingGuard)
+// 		after after after vacToObs
+// 		after after after after (doNothing and doNothingGuard)
+// 		after after after after after (doNothing and doNothingGuard)
+// 		after after after after after after (doNothing and doNothingGuard)
+// 		after after after after after after after (doNothing and doNothingGuard)
+// 		after after after after after after after after obsToExit
+// 		after after after after after after after after after always (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)
+// 	} for exactly 1 Person, 5 Int is sat
+// 	thm: {
+// 	  (init and always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson)))
+// 	} for exactly 1 Person, 5 Int is sat
+// }
 
-run{
-	init and always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
-} for exactly 1 Person, 5 Int
-// run {traces} for exactly 1 Person, 5 Int
+// run{
+// 	init and always (ballToWaiting or waitingToVac or (doNothing and doNothingGuard) or vacToObs or obsToExit or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
+// } for exactly 1 Person, 5 Int
+run {traces} for exactly 1 Person, 5 Int
