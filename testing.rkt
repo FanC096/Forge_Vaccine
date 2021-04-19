@@ -263,8 +263,8 @@ pred waitingToVac {
 
 
 pred vacToObsGuard{
-	some p: Person | {
-		p in vacRoom.people and before once (doNothing and p in vacRoom.people)
+	all p: vacRoom.Person | {
+		before once (doNothing and p in vacRoom.people)
 	}
 	#(obsRoom.people) < sum[obsRoom.capacity]
 }
@@ -276,9 +276,7 @@ pred vacToObs{
 
 	vacToObsGuard
 	vacRoom.numVaccines' = vacRoom.numVaccines
-	all p: vacRoom.people | {
-		before once (doNothing and p in vacRoom.people)
-	}
+	
 	people' = people - vacRoom->Person + obsRoom->(vacRoom.people)
 
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
