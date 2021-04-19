@@ -421,7 +421,7 @@ test expect{
 
 			waitingToVacGuard
 		}
-	} is unsat 
+	} is sat 
 }
 
 // QC
@@ -444,7 +444,71 @@ pred waitingToVac {
 
 
 test expect{
+	waitingToVacTest1: {waitingToVac and not waitingToVacGuard} is unsat
+	waitingToVacTest2: {eventually waitingToVac} is sat
+	waitingToVacTest3: {
+		some Person0, Person1, Person2: Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
 
+
+			//pre
+			no Ballpark.people 
+			waitingRoom.people = Person2
+			vacRoom.people = Person1
+			obsRoom.people = Person0 
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[1]
+
+			waitingToVac
+		}
+	} is sat 
+
+	waitingToVacTest4: {
+		some Person0, Person1, Person2: Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+
+			//pre
+			no Ballpark.people 
+			waitingRoom.people = Person2
+			vacRoom.people = Person1
+			obsRoom.people = Person0 
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[1]
+			vacRoom.numVaccines' = sing[1]
+
+			waitingToVac
+		}
+	} is unsat 
+
+	waitingToVacTest4: {
+		some Person0, Person1, Person2: Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+
+			//pre
+			no Ballpark.people 
+			waitingRoom.people = Person2
+			vacRoom.people = Person1
+			obsRoom.people = Person0 
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[1]
+
+			vacRoom.people' = Person1
+			vacRoom.numVaccines' = sing[0]
+
+			waitingToVac
+		}
+	} is unsat 
 }
 
 
