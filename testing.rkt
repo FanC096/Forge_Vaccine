@@ -261,14 +261,12 @@ pred waitingToVac {
 	vacRoom.productionStage = vacRoom.productionStage'
 }
 
-
 pred vacToObsGuard{
-	all p: vacRoom.Person | {
+	all p: vacRoom.people | {
 		before once (doNothing and p in vacRoom.people)
 	}
 	#(obsRoom.people) < sum[obsRoom.capacity]
 }
-
 
 // YR
 pred vacToObs{
