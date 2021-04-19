@@ -49,19 +49,27 @@ one sig Clock{
 	var timer: one Int
 }
 
+// methods:
+// ***STATE CHANGE is 5 minutes ****
+// (for waiting: make a doNothing for each room (each state has a different time amt))
+
+
 // AK
 pred isQueue {
-	no (^next) & iden
-	some head: Person | some tail: Person{
-		all p: (Person - head) | one next.p
-		all p: (Person - tail) | one p.next
-		no next.head
-		one head.next
-		no tail.next
-		one next.tail
-		head.*next = Person
-	}
+    #(Person) >= 2 implies {
+        no (^next) & iden
+        some head: Person | some tail: Person {
+            all p: (Person - head) | one next.p
+            all p: (Person - tail) | one p.next
+            no next.head
+            one head.next
+            no tail.next
+            one next.tail
+            head.*next = Person
+        }
+    }
 }
+
 
 // SM
 pred initCapacity{
@@ -100,12 +108,6 @@ pred roomConstraints{
 }
 
 // ====== Transitions ========
-
-// QC
-pred doNothingGuard{
-	(#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
-}
-
 // QC
 // 5 minutes goes by
 pred doNothing {
@@ -124,7 +126,6 @@ pred doNothing {
 	vacRoom.productionStage = sing[1] implies vacRoom.numVaccines' = sing[add[sum[vacRoom.numVaccines], 6]]
 	vacRoom.productionStage != sing[1] implies vacRoom.numVaccines' = vacRoom.numVaccines
 }
-
 
 // AK
 // need to make sure that only one transistion happens (one person moves) in each state
@@ -166,10 +167,11 @@ pred ballToWaiting{
 
 
 // QC
+
 pred waitingToVacGuard{
 	// vaccination room must have room
 	#(vacRoom.people) < sum[vacRoom.capacity]
-	#numVaccines > 0
+	sum[vacRoom.numVaccines] > 0
 	some p: Person | { p in waitingRoom.people }
 }
 
@@ -191,9 +193,11 @@ pred waitingToVac {
 	vacRoom.productionStage = vacRoom.productionStage'
 }
 
-// YR
 pred vacToObsGuard{
-	before doNothing
+	some vacRoom.people
+	all p: vacRoom.people | {
+		before once (doNothing and p in vacRoom.people)
+	}
 	#(obsRoom.people) < sum[obsRoom.capacity]
 }
 
@@ -203,7 +207,9 @@ pred vacToObs{
 
 	vacToObsGuard
 	vacRoom.numVaccines' = vacRoom.numVaccines
+	
 	people' = people - vacRoom->Person + obsRoom->(vacRoom.people)
+
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 	Clock.timer' = Clock.timer
 	vacRoom.productionStage = vacRoom.productionStage'
@@ -212,7 +218,8 @@ pred vacToObs{
 // SM
 pred obsToExitGuard{
 	some p: Person | {
-		p in obsRoom.people and before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
+		p in obsRoom.people
+		before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 	}
 }
 
@@ -222,7 +229,8 @@ pred obsToExit{
 
 	// once (doNothing and once(doNothing and once (doNothing and once p in obsRoom))) then move p to exit
 	some p: Person | {
-		p in obsRoom.people and before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
+		p in obsRoom.people
+		before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 		people' = people - obsRoom->p
 	}
 
@@ -250,6 +258,16 @@ pred makeVaccines {
 	people' = people
 	Clock.timer' = Clock.timer
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
+}
+
+// QC
+pred doNothingGuard{
+	not ballToWaitingGuard
+	not waitingToVacGuard
+	not vacToObsGuard
+	not obsToExitGuard
+	not makeVacGuard
+	// (#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
 }
 
 pred traces{
@@ -284,8 +302,9 @@ pred traces{
 
 //SAM TESTS START HERE
 
-//initCapacity tests
-
+// ======================================================
+//                  initCapacity Tests
+// ======================================================
 test expect {
 	initCapacity1: {
 			some Person0, Person1, Person2 : Person | {
@@ -440,8 +459,9 @@ test expect {
 	} is unsat 
 }
 
-//init tests
-
+// ======================================================
+//                  init Tests
+// ======================================================
 test expect {
         init0: {init} for 5 Person is sat
 
@@ -587,9 +607,9 @@ test expect {
 }
 
 
-
-//obsToExitGuard tests
-
+// ======================================================
+//                  obsToExitGuard Tests
+// ======================================================
 test expect {
     obsToExitGuardSat: {after after after after after obsToExitGuard} is sat
     nonemptyObsRoom: {always {obsToExitGuard implies some obsRoom.people}} is theorem
@@ -822,8 +842,9 @@ test expect {
 }
 
 
-//obsToExit tests
-
+// ======================================================
+//                  obsToExit Tests
+// ======================================================
 test expect {
     obsToExit1: {
 			some Person0, Person1, Person2 : Person | {
