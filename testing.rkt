@@ -361,26 +361,26 @@ pred traces{
 	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
 }
 
-test expect{
-	ISSAT: {
-		init
-		addToBallpark
-		after ballToWaiting
-		after after ballToWaiting
-		after after after ballToWaiting
-		after after after after ballToWaiting
-		after after after after after waitingToVac
-		after after after after after after waitingToVac
-		after after after after after after after ballToWaiting
-		after after after after after after after after ballToWaiting
-		after after after after after after after after after doNothing
-		// after after after after after after after after after doNothing
-		// after after after after after after after after after after doNothing
-		// after after after after after after after after after after after obsToExit
-		// after after after after after after after after after after after after obsToExit
-		// after after after after after after after after after after after after after doNothing
-	} for 6 Person is sat
-}
+// test expect{
+// 	ISSAT: {
+// 		init
+// 		addToBallpark
+// 		after ballToWaiting
+// 		after after ballToWaiting
+// 		after after after ballToWaiting
+// 		after after after after ballToWaiting
+// 		after after after after after waitingToVac
+// 		after after after after after after waitingToVac
+// 		after after after after after after after ballToWaiting
+// 		after after after after after after after after ballToWaiting
+// 		after after after after after after after after after doNothing
+// 		// after after after after after after after after after doNothing
+// 		// after after after after after after after after after after doNothing
+// 		// after after after after after after after after after after after obsToExit
+// 		// after after after after after after after after after after after after obsToExit
+// 		// after after after after after after after after after after after after after doNothing
+// 	} for 6 Person is sat
+// }
 
 // test expect{
 // 	ISSAT: {
@@ -388,3 +388,86 @@ test expect{
 // 	} for 10 Person is sat
 // }
 //run {traces} for exactly 10 Person, 7 Int
+
+
+test expect{
+	waitingToVacGuardTest1: {
+			some Person0, Person1, Person2: Person | {
+				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+				next = Person0 -> Person1 + Person1 -> Person2
+
+
+				//pre
+				no Ballpark.people
+				waitingRoom.people = Person0 + Person1
+				no vacRoom.people
+				no obsRoom.people
+
+				NextPersonTracker.nextPerson = Person2
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[0]
+
+				waitingToVacGuard
+			}
+	} is unsat 
+
+	waitingToVacGuardTest2: {
+		some Person0, Person1, Person2: Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+
+			//pre
+			Ballpark.people = Person0 + Person1
+			no waitingRoom.people 
+			no vacRoom.people
+			no obsRoom.people
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[6]
+
+			waitingToVacGuard
+		}
+	} is unsat 
+
+	waitingToVacGuardTest3: {
+		some Person0, Person1, Person2: Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+
+			//pre
+			no Ballpark.people 
+			waitingRoom.people = Person2
+			vacRoom.people = Person0 + Person1
+			no obsRoom.people
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[6]
+
+			waitingToVacGuard
+		}
+	} is unsat 
+
+	waitingToVacGuardTest4: {
+		some Person0, Person1, Person2: Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+
+			//pre
+			no Ballpark.people 
+			waitingRoom.people = Person2
+			vacRoom.people = Person1
+			obsRoom.people = Person0 
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[1]
+
+			waitingToVacGuard
+		}
+	} is sat 
+}
