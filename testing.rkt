@@ -355,7 +355,6 @@ pred traces{
 	after after after after after after after after after after doNothing
 	after after after after after after after after after after after obsToExit
 	after after after after after after after after after after after after obsToExit
-	after after after after after after after after after after after after after doNothing
 
 	// init
 	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
@@ -378,7 +377,6 @@ pred traces{
 // 		// after after after after after after after after after after doNothing
 // 		// after after after after after after after after after after after obsToExit
 // 		// after after after after after after after after after after after after obsToExit
-// 		// after after after after after after after after after after after after after doNothing
 // 	} for 6 Person is sat
 // }
 
