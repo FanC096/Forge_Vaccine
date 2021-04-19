@@ -239,7 +239,7 @@ pred ballToWaiting{
 pred waitingToVacGuard{
 	// vaccination room must have room
 	#(vacRoom.people) < sum[vacRoom.capacity]
-	#numVaccines > 0
+	sum[vacRoom.numVaccines] > 0
 	some p: Person | { p in waitingRoom.people }
 }
 
