@@ -363,18 +363,19 @@ test expect{
 		addToBallpark
 		after ballToWaiting
 		after after ballToWaiting
-		after after after waitingToVac
-		after after after after waitingToVac
-		after after after after after doNothing
-		after after after after after after vacToObs
-		after after after after after after after doNothing
-		after after after after after after after after doNothing
+		after after after ballToWaiting
+		after after after after ballToWaiting
+		after after after after after waitingToVac
+		after after after after after after waitingToVac
+		after after after after after after after ballToWaiting
+		after after after after after after after after ballToWaiting
 		after after after after after after after after after doNothing
-		after after after after after after after after after after doNothing
-		after after after after after after after after after after after obsToExit
-		after after after after after after after after after after after after obsToExit
-		after after after after after after after after after after after after after doNothing
-	} for 10 Person is sat
+		// after after after after after after after after after doNothing
+		// after after after after after after after after after after doNothing
+		// after after after after after after after after after after after obsToExit
+		// after after after after after after after after after after after after obsToExit
+		// after after after after after after after after after after after after after doNothing
+	} for 6 Person is sat
 }
 
 // test expect{

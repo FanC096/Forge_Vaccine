@@ -110,49 +110,6 @@ pred roomConstraints{
 // ====== Transitions ========
 
 // QC
-pred doNothingGuard{
-	(#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
-}
-
-test expect {
-	doNothingGuardTest1: {
-			some Person0, Person1, Person2 : Person | {
-				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
-				next = Person0 -> Person1 + Person1 -> Person2
-
-				Ballpark.people = Person0 + Person1
-				no waitingRoom.people
-				no vacRoom.people
-				no obsRoom.people
-
-				NextPersonTracker.nextPerson = Person2
-				Clock.timer = sing[0]
-				vacRoom.numVaccines = sing[6]
-
-				doNothingGuard
-			}
-	} is unsat 
-
-	doNothingGuardTest2: {
-		some Person0, Person1, Person2 : Person | {
-			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
-			next = Person0 -> Person1 + Person1 -> Person2
-
-			no Ballpark.people 
-			no waitingRoom.people
-			vacRoom.people = Person1 + Person2
-			no obsRoom.people
-
-			no NextPersonTracker.nextPerson
-			Clock.timer = sing[0]
-			vacRoom.numVaccines = sing[6]
-
-			doNothingGuard
-		}
-	} is sat 
-}
-
-// QC
 // 5 minutes goes by
 pred doNothing {
 	// everything stays the same
@@ -172,6 +129,8 @@ pred doNothing {
 }
 
 test expect {
+	doNothingTest0: {doNothing} is sat
+
 	doNothingTest1: {
 			some Person0, Person1, Person2 : Person | {
 				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
@@ -452,6 +411,8 @@ pred waitingToVacGuard{
 	some p: Person | { p in waitingRoom.people }
 }
 
+
+
 // QC
 pred waitingToVac {
 	// you must be at the head of the waiting room queue
@@ -491,7 +452,8 @@ pred vacToObs{
 // SM
 pred obsToExitGuard{
 	some p: Person | {
-		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
+		p in obsRoom.people
+		before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 	}
 }
 
@@ -501,7 +463,8 @@ pred obsToExit{
 
 	// once (doNothing and once(doNothing and once (doNothing and once p in obsRoom))) then move p to exit
 	some p: Person | {
-		once (doNothing and once (doNothing and once (doNothing and once (doNothing and p in obsRoom.people))))
+		p in obsRoom.people
+		before once (doNothing and before once (doNothing and before once (doNothing and before once (doNothing and p in obsRoom.people))))
 		people' = people - obsRoom->p
 	}
 
@@ -529,6 +492,69 @@ pred makeVaccines {
 	people' = people
 	Clock.timer' = Clock.timer
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
+}
+
+// QC
+pred doNothingGuard{
+	not ballToWaitingGuard
+	not waitingToVacGuard
+	not vacToObsGuard
+	not obsToExitGuard
+	not makeVacGuard
+	// (#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
+}
+
+
+test expect {
+	doNothingGuardTest1: {
+			some Person0, Person1, Person2 : Person | {
+				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+				next = Person0 -> Person1 + Person1 -> Person2
+
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people
+				no obsRoom.people
+
+				NextPersonTracker.nextPerson = Person2
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[6]
+
+				doNothingGuard
+			}
+	} is unsat 
+
+	doNothingGuardTest2: {
+		some Person0, Person1, Person2 : Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+			no Ballpark.people 
+			waitingRoom.people = Person2
+			vacRoom.people = Person1 
+			no obsRoom.people
+
+			no NextPersonTracker.nextPerson
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[6]
+
+			after {
+				no Ballpark.people 
+				no waitingRoom.people
+				vacRoom.people = Person1 + Person2
+				no obsRoom.people
+
+				no NextPersonTracker.nextPerson
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[6]
+			}
+			after doNothingGuard
+		}
+	} is sat 
+	
+	doNothingGuardTest3: {
+		
+	}
 }
 
 pred traces{
