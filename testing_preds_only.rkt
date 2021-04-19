@@ -320,4 +320,4 @@ pred traces_hard {
 // 	} for 10 Person is sat
 // }
 
-// run {traces} for exactly 10 Person, 7 Int
+run {traces} for exactly 10 Person, 7 Int
