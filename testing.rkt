@@ -559,3 +559,176 @@ test expect{
 // ======================================================
 //                  doNothing Tests
 // ======================================================
+
+
+test expect {
+	doNothingTest0: {doNothing} is sat
+
+	doNothingTest1: {
+			some Person0, Person1, Person2 : Person | {
+				#(Person0 + Person1 + Person2) = 3
+				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+				next = Person0 -> Person1 + Person1 -> Person2
+
+
+				//pre
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people
+				no obsRoom.people
+
+				NextPersonTracker.nextPerson = Person2
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[6]
+				vacRoom.productionStage = sing[0]
+
+
+				//post
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people'
+				no obsRoom.people'
+
+				NextPersonTracker.nextPerson' = Person2
+				Clock.timer' = sing[1]
+				vacRoom.numVaccines' = vacRoom.numVaccines
+				vacRoom.numVaccines = sing[6]
+				vacRoom.productionStage = sing[0]
+
+				doNothing
+			}
+	} for exactly 3 Person, 5 Int is sat 
+
+	doNothingTest2: {
+			some Person0, Person1, Person2 : Person | {
+				#(Person0 + Person1 + Person2) = 3
+				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+				next = Person0 -> Person1 + Person1 -> Person2
+
+
+				//pre
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people
+				no obsRoom.people
+
+				NextPersonTracker.nextPerson = Person2
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[6]
+				vacRoom.productionStage = sing[0]
+
+
+				//post
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people'
+				no obsRoom.people'
+
+				NextPersonTracker.nextPerson' = Person2
+				Clock.timer' = sing[0]
+				vacRoom.numVaccines' = sing[6]
+				vacRoom.productionStage = sing[0]
+
+				doNothing
+			}
+	} for exactly 3 Person, 5 Int is unsat 
+
+	doNothingTest3: {
+			some Person0, Person1, Person2 : Person | {
+				#(Person0 + Person1 + Person2) = 3
+				capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+				next = Person0 -> Person1 + Person1 -> Person2
+
+
+				//pre
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people
+				no obsRoom.people
+
+				NextPersonTracker.nextPerson = Person2
+				Clock.timer = sing[0]
+				vacRoom.numVaccines = sing[6]
+				vacRoom.productionStage = sing[0]
+
+				//post
+				Ballpark.people = Person0 + Person1
+				no waitingRoom.people
+				no vacRoom.people'
+				no obsRoom.people'
+
+				NextPersonTracker.nextPerson' = Person2
+				Clock.timer' = sing[1]
+				vacRoom.numVaccines' = sing[5]
+				vacRoom.productionStage = sing[0]
+
+				doNothing
+			}
+	} for exactly 3 Person, 5 Int is unsat 
+
+	doNothingTest4: {
+		some Person0, Person1, Person2 : Person | {
+			#(Person0 + Person1 + Person2) = 3
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+
+			//pre
+			Ballpark.people = Person0 + Person1
+			no waitingRoom.people
+			no vacRoom.people
+			no obsRoom.people
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[6]
+			vacRoom.productionStage = sing[2]
+
+			//post
+			Ballpark.people = Person0 + Person1
+			no waitingRoom.people
+			no vacRoom.people'
+			no obsRoom.people'
+
+			NextPersonTracker.nextPerson' = Person2
+			Clock.timer' = sing[1]
+			vacRoom.numVaccines' = sing[5]
+			vacRoom.productionStage = sing[3]
+
+			doNothing
+		}
+	} for exactly 3 Person, 5 Int is unsat 
+
+	doNothingTest5: {
+		some Person0, Person1, Person2 : Person | {
+			#(Person0 + Person1 + Person2) = 3
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+
+			//pre
+			Ballpark.people = Person0 + Person1
+			no waitingRoom.people
+			no vacRoom.people
+			no obsRoom.people
+
+			NextPersonTracker.nextPerson = Person2
+			Clock.timer = sing[0]
+			vacRoom.numVaccines = sing[0]
+			vacRoom.productionStage = sing[1]
+
+			//post
+			Ballpark.people = Person0 + Person1
+			no waitingRoom.people
+			no vacRoom.people'
+			no obsRoom.people'
+
+			NextPersonTracker.nextPerson' = Person2
+			Clock.timer' = sing[1]
+			vacRoom.numVaccines' = sing[6]
+			vacRoom.productionStage = sing[0]
+
+			doNothing
+		}
+	} for exactly 3 Person, 5 Int is sat 
+}	
