@@ -268,7 +268,12 @@ pred doAbosolutelyNothing{
 }
 
 pred doNothingGuard{
-	(#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
+	not ballToWaitingGuard
+	not waitingToVacGuard
+	not vacToObsGuard
+	not obsToExitGuard
+	not makeVacGuard
+	// (#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
 }
 
 pred traces{
