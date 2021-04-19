@@ -197,7 +197,7 @@ pred ballToWaiting{
 
 // 				ballToWaiting
 // 			}
-// 	} is sat 
+// 	} is sat
 
 // 	// Person from the middle of the line moves-- not the front (unsat)
 // 	ballToWaitingTest2: {
@@ -228,7 +228,7 @@ pred ballToWaiting{
 
 // 				ballToWaiting
 // 			}
-// 	} is unsat 
+// 	} is unsat
 // }
 
 
@@ -261,11 +261,14 @@ pred waitingToVac {
 	vacRoom.productionStage = vacRoom.productionStage'
 }
 
-// YR
+
 pred vacToObsGuard{
-	before doNothing
+	some p: Person | {
+		p in vacRoom.people and before once (doNothing and p in vacRoom.people)
+	}
 	#(obsRoom.people) < sum[obsRoom.capacity]
 }
+
 
 // YR
 pred vacToObs{
@@ -273,7 +276,11 @@ pred vacToObs{
 
 	vacToObsGuard
 	vacRoom.numVaccines' = vacRoom.numVaccines
+	all p: vacRoom.people | {
+		before once (doNothing and p in vacRoom.people)
+	}
 	people' = people - vacRoom->Person + obsRoom->(vacRoom.people)
+
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
 	Clock.timer' = Clock.timer
 	vacRoom.productionStage = vacRoom.productionStage'
@@ -336,7 +343,7 @@ pred doNothingGuard{
 
 pred traces{
 	// run everything
-	
+
 	init
 	addToBallpark
 	after ballToWaiting
