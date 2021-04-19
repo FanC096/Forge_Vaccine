@@ -262,6 +262,7 @@ pred waitingToVac {
 }
 
 pred vacToObsGuard{
+	some vacRoom.people
 	all p: vacRoom.people | {
 		before once (doNothing and p in vacRoom.people)
 	}
