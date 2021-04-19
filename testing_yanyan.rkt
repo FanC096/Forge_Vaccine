@@ -334,6 +334,7 @@ pred makeVaccines {
 
 	vacRoom.productionStage' = sing[3]
 	// vacRoom.numVaccines' = sing[sum[vacRoom.numVaccines, sing[6]]]
+	vacRoom.numVaccines' = vacRoom.numVaccines
 	people' = people
 	Clock.timer' = Clock.timer
 	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
@@ -778,5 +779,106 @@ test expect {
 
 // makeVaccines tests
 test expect {
-	
+	mv1: {
+		some Person0, Person1, Person2 : Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+			//pre
+			Ballpark.people = Person2
+			no waitingRoom.people
+			vacRoom.people = Person0 + Person1
+			no obsRoom.people
+			Clock.timer = sing[0]
+			vacRoom.productionStage = sing[0]
+
+			//post
+			Ballpark.people' = Person2
+			no waitingRoom.people'
+			vacRoom.people' = Person0 + Person1
+			no obsRoom.people'
+			Clock.timer' = sing[0]
+			vacRoom.productionStage' = sing[3]
+
+			makeVaccines
+		}
+	} is sat
+
+	// took time
+	mv2: {
+		some Person0, Person1, Person2 : Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+			//pre
+			Ballpark.people = Person2
+			no waitingRoom.people
+			vacRoom.people = Person0 + Person1
+			no obsRoom.people
+			Clock.timer = sing[0]
+			vacRoom.productionStage = sing[0]
+
+			//post
+			Ballpark.people' = Person2
+			no waitingRoom.people'
+			vacRoom.people' = Person0 + Person1
+			no obsRoom.people'
+			Clock.timer' = sing[1]
+			vacRoom.productionStage' = sing[3]
+
+			makeVaccines
+		}
+	} is unsat
+
+	// set the wrong production stage
+	mv3: {
+		some Person0, Person1, Person2 : Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+			//pre
+			Ballpark.people = Person2
+			no waitingRoom.people
+			vacRoom.people = Person0 + Person1
+			no obsRoom.people
+			Clock.timer = sing[0]
+			vacRoom.productionStage = sing[0]
+
+			//post
+			Ballpark.people' = Person2
+			no waitingRoom.people'
+			vacRoom.people' = Person0 + Person1
+			no obsRoom.people'
+			Clock.timer' = sing[0]
+			vacRoom.productionStage' = sing[1]
+
+			makeVaccines
+		}
+	} is unsat
+
+	// people moved
+	mv4: {
+		some Person0, Person1, Person2 : Person | {
+			capacity = Ballpark -> sing[10] + waitingRoom -> sing[4] + vacRoom -> sing[2] + obsRoom -> sing[5]
+			next = Person0 -> Person1 + Person1 -> Person2
+
+			//pre
+			Ballpark.people = Person2
+			no waitingRoom.people
+			vacRoom.people = Person0 + Person1
+			no obsRoom.people
+			Clock.timer = sing[0]
+			vacRoom.productionStage = sing[0]
+
+			//post
+			no Ballpark.people'
+			waitingRoom.people' = Person2
+			vacRoom.people' = Person0 + Person1
+			no obsRoom.people'
+			Clock.timer' = sing[0]
+			vacRoom.productionStage' = sing[3]
+
+			makeVaccines
+		}
+	} is unsat
 }
