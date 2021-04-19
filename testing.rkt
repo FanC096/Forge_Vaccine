@@ -11,13 +11,7 @@
 // obsRoom stay 20 minutes
 
 option problem_type temporal
-<<<<<<< HEAD
-// option max_tracelength 200
-// option max_tracelength 20
 option max_tracelength 6
-=======
-option max_tracelength 20
->>>>>>> 03faa293447c634880f3b0741fe04e09ef452a6f
 
 sig Person {
 	// a predetermined queue of potential people
@@ -1559,7 +1553,6 @@ test expect {
 				no vacRoom.people
 				no obsRoom.people
 
-<<<<<<< HEAD
 				ballToWaitingGuard
 			}
 	} is sat 
@@ -1972,15 +1965,9 @@ test expect{
 	} for exactly 3 Person, 5 Int is sat 
 }
 
-<<<<<<< HEAD
-//======================================================
-//                 waitingToVac Tests
-//======================================================
-=======
 // ======================================================
 //                  waitingToVac Tests
 // ======================================================
->>>>>>> 03faa293447c634880f3b0741fe04e09ef452a6f
 
 test expect{
 	waitingToVacTest1: {waitingToVac and not waitingToVacGuard} is unsat
@@ -2056,10 +2043,6 @@ test expect{
 // ======================================================
 //                  doNothingGuard Tests
 // ======================================================
-<<<<<<< HEAD
-=======
-
->>>>>>> 03faa293447c634880f3b0741fe04e09ef452a6f
 
 test expect {
 	doNothingGuardTest1: {
