@@ -320,7 +320,7 @@ pred traces_hard {
 // 	} for 10 Person is sat
 // }
 
-// run {traces} for exactly 10 Person, 7 Int
+// run {traces_hard} for exactly 10 Person, 7 Int
 
 
 
@@ -414,9 +414,9 @@ test expect{
 	} for exactly 3 Person, 5 Int is sat 
 }
 
-======================================================
-                 waitingToVac Tests
-======================================================
+// ======================================================
+//                  waitingToVac Tests
+// ======================================================
 
 test expect{
 	waitingToVacTest1: {waitingToVac and not waitingToVacGuard} is unsat
@@ -489,9 +489,9 @@ test expect{
 	} for exactly 3 Person, 5 Int is unsat 
 }
 
-======================================================
-                 doNothingGuard Tests
-======================================================
+// ======================================================
+//                  doNothingGuard Tests
+// ======================================================
 
 
 test expect {
