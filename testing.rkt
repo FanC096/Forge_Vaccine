@@ -341,6 +341,11 @@ pred doNothingGuard{
 pred traces{
 	// run everything
 
+	// init
+	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
+}
+
+pred traces_hard {
 	init
 	addToBallpark
 	after ballToWaiting
@@ -355,9 +360,6 @@ pred traces{
 	after after after after after after after after after after doNothing
 	after after after after after after after after after after after obsToExit
 	after after after after after after after after after after after after obsToExit
-
-	// init
-	// always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
 }
 
 // test expect{
