@@ -270,6 +270,8 @@ pred doNothingGuard{
 	// (#(vacRoom.people) = 2) or (some (vacRoom.people + obsRoom.people) and no (waitingRoom.people + Ballpark.people)) or (vacRoom.numVaccines = sing[0])
 }
 
+
+
 pred traces{
 	// run everything
 
@@ -320,4 +322,4 @@ pred traces_hard {
 // 	} for 10 Person is sat
 // }
 
-run {traces_hard} for exactly 10 Person, 7 Int
+run {traces} for exactly 10 Person, 7 Int
