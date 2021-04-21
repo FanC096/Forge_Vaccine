@@ -271,13 +271,21 @@ pred doNothingGuard{
 }
 
 
+pred doAbosolutelyNothing{
+	people' = people
+	Clock.timer' = Clock.timer
+	vacRoom.numVaccines' = vacRoom.numVaccines
+	NextPersonTracker.nextPerson' = NextPersonTracker.nextPerson
+	vacRoom.productionStage' = vacRoom.productionStage
+}
 
 pred traces{
 	// run everything
 
 	init
-	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard))
+	always (addToBallpark or ballToWaiting or waitingToVac or vacToObs or obsToExit or (doNothing and doNothingGuard) or (doAbosolutelyNothing and no people and no NextPersonTracker.nextPerson))
 }
+
 
 pred traces_hard {
 	init
